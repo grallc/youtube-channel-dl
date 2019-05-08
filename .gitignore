@@ -1,0 +1,14 @@
+# Node
+node_modules
+build
+npm-debug.log
+.env
+package-lock.json
+
+
+# PHPStorm
+.idea/
+
+# VSCode
+.vscode
+.vs/
