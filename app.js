@@ -16,7 +16,6 @@ const ytdl = require('youtube-dl');
 
 let channelLink = argv.id;
 channelLink = channelLink.replace(`https://www.youtube.com/channel/`, ``).replace(`/`, ``)
-console.log(channelLink);
 
 const getVideos = async (youtubeChannelLink) => {
   try {
@@ -25,6 +24,11 @@ const getVideos = async (youtubeChannelLink) => {
   } catch (e) {
     throw new Error(`Unable to get this channel's videos.`);
   }
+}
+
+const dir = `videos`;
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
 }
 
 const downloadVideos = async (youtubeChannelLink) => {
@@ -37,18 +41,23 @@ const downloadVideos = async (youtubeChannelLink) => {
           cwd: __dirname
         });
 
-      const dir = `videos`;
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
+      const channelDir = `videos/${video.snippet.channelTitle}`;
+      if (!fs.existsSync(channelDir)) {
+        fs.mkdirSync(channelDir);
       }
+      let infos;
 
-      videoDl.on('info', function (info) {
-        console.log('Download started');
-        console.log('filename: ' + info._filename);
-        console.log('size: ' + info.size);
+      videoDl.on('info', function (videoInfos) {
+        infos = videoInfos;
+        console.log(`Started downloading '${videoInfos.title}'... (${videoInfos.size/1000000}Mb)`)
+      });
+      videoDl.pipe(fs.createWriteStream(`${channelDir}/${(video.snippet.title).replace('/', '\'')}.mp4`));
+
+      videoDl.on('end', function() {
+        console.log(`Successfully downloaded and saved '${infos.title}' in '${__dirname}/${channelDir}' !`)
       });
 
-      videoDl.pipe(fs.createWriteStream(`${dir}/${video.snippet.title}.mp4`));
+
 
     }
   }
