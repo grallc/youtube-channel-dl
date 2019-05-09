@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "fs": "0.0.1-security",
+    "yargs": "^13.2.2",
     "youtube-dl": "^1.13.1"
   }
 }

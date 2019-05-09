@@ -1,13 +1,26 @@
+const argv = require('yargs')
+  .usage('Usage : $0 [options]')
+  .alias('id', 'channel')
+  .nargs('id', 1)
+  .describe('id', 'Youtube Channel ID')
+  .alias('api', 'key')
+  .nargs('api', 1)
+  .describe('api', 'Google API Key [Youtube API must be enabled]')
+  .demandOption(['id', 'api'])
+  .help('h')
+  .argv;
+
 const axios = require('axios');
 const fs = require('fs');
 const ytdl = require('youtube-dl');
 
-let channelLink = `https://www.youtube.com/channel/UCWrW3kmk_mpt4H86OBhleaA/`;
+let channelLink = argv.id;
 channelLink = channelLink.replace(`https://www.youtube.com/channel/`, ``).replace(`/`, ``)
+console.log(channelLink);
 
 const getVideos = async (youtubeChannelLink) => {
   try {
-    const response = await axios.get(`https://www.googleapis.com/youtube/v3/search?channelId=${channelLink}&part=snippet,id&order=date&maxResults=50&key=${process.env.GOOGLE_API_KEY}`);
+    const response = await axios.get(`https://www.googleapis.com/youtube/v3/search?channelId=${channelLink}&part=snippet,id&order=date&maxResults=50&key=${argv.api}`);
     return response.data;
   } catch (e) {
     throw new Error(`Unable to get this channel's videos.`);
@@ -24,7 +37,6 @@ const downloadVideos = async (youtubeChannelLink) => {
           cwd: __dirname
         });
 
-
       const dir = `videos`;
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
@@ -35,7 +47,7 @@ const downloadVideos = async (youtubeChannelLink) => {
         console.log('filename: ' + info._filename);
         console.log('size: ' + info.size);
       });
-      
+
       videoDl.pipe(fs.createWriteStream(`${dir}/${video.snippet.title}.mp4`));
 
     }
