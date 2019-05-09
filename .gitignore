@@ -12,3 +12,5 @@ package-lock.json
 # VSCode
 .vscode
 .vs/
+
+videos/
