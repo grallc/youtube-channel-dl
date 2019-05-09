@@ -77,7 +77,7 @@ const downloadVideo = async (videos, amount) => {
       }
     });
   } else {
-    console.log(`\n'${videos[0].snippet.title}' was a Broadcast, so has been skipped.`)
+    console.log(`\n'${videos[0].snippet.title}' wasn't a video, so has been skipped.`)
 
     videos.shift();
     if (videos.length == 0) {
